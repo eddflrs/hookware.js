@@ -6,7 +6,7 @@
  */
 
 /*
- * Glossary of Terms used throughout the docstrings.
+ * Terms used throughout the docstrings.
  *
  * hookwared function - The function passed into hookware().
  *  i.e: hookware(myFunc); // myFunc is the 'hookwared function'
@@ -15,6 +15,8 @@
 /* Holds some utilities to make things easier. */
 
 var utils = {};
+
+utils.slice = Array.prototype.slice;
 
 /**
  * Converts an Arguments object into an Array.
@@ -46,25 +48,33 @@ fn.curry = function () {
 /**
  * Invokes the hookwared function and passes its output into the first function
  * argument. If more than one function is passed in as argument, the same
- * process is applied where the output of one function becomes the input of
- * the next function arugment.
+ * process is applied where the output of one argument function becomes the input 
+ * of the next argument function.
  * i.e: hookware(fnA).wrap(fnB, fnC); // => fnC(fnB(fnA()));
  * @public
  */
 fn.wrap = function () {
-  var f = this;
-  var wrapFns = arguments;
-  return function () {
-    var i
-      , args = arguments
-      , argsLength = args.length
-      , result = f.apply(this, arguments);
+  var f = this
+    , wrapFns = arguments;
 
-    if (wrapFns.length > 1) {
-      throw new Error('Wrap can only take 1 function arg for now');
+  var wrap = function (fns, input) {
+
+    if (!fns || fns.length < 1) {
+      return input;
     }
-    return wrapFns[0].call(this, result);
+
+    var result = fns[0].call(this, input)
+      , nextFns = utils.slice.call(fns, 1);
+
+    return wrap(nextFns, result);
   };
+
+  var wrappedFn = function () {
+    var result = f.apply(this, arguments);
+    return wrap(wrapFns, result);
+  };
+
+  return wrappedFn;
 };
 
 fn.before = function () {

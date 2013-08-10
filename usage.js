@@ -21,6 +21,9 @@ var tripleThat = function (n) {
   return 3 * n;
 }
 
+var quadrupleThat = function (n) {
+  return 4 * n;
+}
 
 // Lets test the curry method.
 
