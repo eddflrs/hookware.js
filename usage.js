@@ -1,28 +1,33 @@
-// var decorate = require('./decorate').decorate;
+var hookware = require('./hookware');
 
-function adder (a, b) {
+var log = console.log;
+
+// log.curry();
+// log.after();
+// log.before();
+// log.wrap();
+
+// Alternative usage example
+
+var adder = function (a, b) {
   return a + b;
 };
 
-function doubleThat (n) {
+var doubleThat = function (n) {
   return 2 * n;
-}
+};
 
-function tripleThat (n) {
+var tripleThat = function (n) {
   return 3 * n;
 }
 
 
-var hookware = require('./hookware').hookware;
+// Lets test the curry method.
 
-var quadrupleThat = hookware.wrap(doubleThat).with(doubleThat);
-var addThenQuadruple = hookware.wrap(adder).with(quadrupleThat);
+var addTwo = hookware(adder).curry(2);
+log('addTwo ', addTwo(8) === 10);
 
+// Lets test the wrap method.
 
-var res = addThenQuadruple(3, 1); // => 16
-
-
-
-var doubleEven = hookware.before(doubleThat).verify(evenNumber);
-
-console.log(doubleEven(13));
+var addThenHextuple = hookware(adder).wrap(doubleThat, tripleThat);
+log('addThenHextuple ', addThenHextuple(1, 2) === 18);
