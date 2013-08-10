@@ -48,7 +48,7 @@ fn.curry = function () {
 /**
  * Invokes the hookwared function and passes its output into the first function
  * argument. If more than one function is passed in as argument, the same
- * process is applied where the output of one argument function becomes the input 
+ * process is applied where the output of one argument function becomes the input
  * of the next argument function.
  * i.e: hookware(fnA).wrap(fnB, fnC); // => fnC(fnB(fnA()));
  * @public
@@ -77,12 +77,35 @@ fn.wrap = function () {
   return wrappedFn;
 };
 
-fn.before = function () {
-  console.log('before');
+
+
+
+/**
+ * Invokes the given function and passed its output into the hookwared function.
+ * @public
+ * @param {Function} fn
+ */
+
+fn.before = function (fn) {
+  var f = this;
+  return function () {
+    var result = fn.apply(this, arguments);
+    return f.call(this, result);
+  };
 };
 
-fn.after = function () {
-  console.log('after');
+
+/**
+ * Invokes the given function with the results of the hookwared function.
+ * @public
+ * @param {Function} fn
+ */
+fn.after = function (fn) {
+  var f = this;
+  return function () {
+    var result = f.apply(this, arguments);
+    return fn.call(this, result);
+  };
 };
 
 
