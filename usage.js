@@ -1,13 +1,7 @@
 var hookware = require('./hookware');
+var codein = require('node-codein');
 
 var log = console.log;
-
-// log.curry();
-// log.after();
-// log.before();
-// log.wrap();
-
-// Alternative usage example
 
 var adder = function (a, b) {
   return a + b;
@@ -49,17 +43,19 @@ var ensureEvens = function () {
   return areEvens;
 };
 
-var greet = function (name) {
+greet = function (name) {
   return "hello " + name + "!";
 }
 
-var toUpper = function (str) {
-  return str.toUpperCase();
+var o = {
+  foo: function () { console.log('foo');}
 }
 
-var hollerName = hookware(greet).before(toUpper);
+var dump = function () {
+  this.foo();
+  return "hello dump";
+};
 
-log(hollerName('eddo'));
+var dumpIt = hookware(dump).bind(o);
 
-var hollerGreeting = hookware(greet).after(toUpper);
-log(hollerGreeting('eddo'));
+log(dumpIt());
